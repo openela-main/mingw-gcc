@@ -7,21 +7,17 @@
 # NOTE See mingw-filesystem/README.md for the build steps!
 %global bootstrap 0
 
-%if 0%{?rhel} > 8
 %global build_isl 0
-%else
-%global build_isl 1
-%endif
 
 %global isl_version 0.16.1
 
 # Run the testsuite
 %global enable_tests 0
 
-%global DATE 20220819
-%global gitrev 12a206c28987ada47b447ebd200d1fd9639c8edd
-%global gcc_version 12.2.1
-%global gcc_major 12
+%global DATE 20230426
+%global gitrev 99aa4c60d1f6a96b09f65b669d44bbab206f0a75
+%global gcc_version 13.1.1
+%global gcc_major 13
 
 Name:           mingw-gcc
 Version:        %{gcc_version}
@@ -40,9 +36,8 @@ URL:            http://gcc.gnu.org
 %global srcdir gcc-%{version}-%{DATE}
 Source0:        %{srcdir}.tar.xz
 
-Patch0:         mingw-gcc-config.patch
 # See https://sourceforge.net/p/mingw-w64/mailman/mingw-w64-public/thread/8fd2fb03-9b8a-07e1-e162-0bb48bcc3984%40gmail.com/#msg37200751
-Patch1:         0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+Patch0:         0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
 
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -109,6 +104,13 @@ Summary:        MinGW Windows GCC runtime libraries for C for the win32 target
 
 %description -n mingw32-libgcc
 MinGW Windows GCC runtime libraries for C for the win32 target.
+
+
+%package -n mingw32-libstdc++
+Summary:        MinGW Windows GCC runtime libraries for C++ for the win32 target
+
+%description -n mingw32-libstdc++
+MinGW Windows GCC runtime libraries for C++ for the win32 target.
 
 
 %package -n mingw32-libgomp
@@ -189,6 +191,13 @@ Summary:        MinGW Windows GCC runtime libraries for C for the win64 target
 MinGW Windows GCC runtime libraries for C for the win64 target.
 
 
+%package -n mingw64-libstdc++
+Summary:        MinGW Windows GCC runtime libraries for C++ for the win64 target
+
+%description -n mingw64-libstdc++
+MinGW Windows GCC runtime libraries for C++ for the win64 target.
+
+
 %package -n mingw64-libgomp
 Summary:        GCC OpenMP v3.0 shared support library for the win64 target
 Requires:       mingw64-gcc = %{version}-%{release}
@@ -266,6 +275,13 @@ Summary:        MinGW Windows GCC runtime libraries for C for the win64 target
 
 %description -n ucrt64-libgcc
 MinGW Windows GCC runtime libraries for C for the win64 target.
+
+
+%package -n ucrt64-libstdc++
+Summary:        MinGW Windows GCC runtime libraries for C++ for the win64 target
+
+%description -n ucrt64-libstdc++
+MinGW Windows GCC runtime libraries for C++ for the win64 target.
 
 
 %package -n ucrt64-libgomp
@@ -564,13 +580,9 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{_bindir}/%{mingw32_target}-gcov-dump
 %{_bindir}/%{mingw32_target}-gcov-tool
 %dir %{_prefix}/lib/gcc/%{mingw32_target}/%{version}
-%dir %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include-fixed
-%dir %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include
-%dir %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/install-tools
-%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include-fixed/README
-%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include-fixed/*.h
-%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include/*.h
-%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/install-tools/*
+%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include/
+%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/include-fixed/
+%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/install-tools/
 %{_libexecdir}/gcc/%{mingw32_target}/%{version}/collect2
 %{_libexecdir}/gcc/%{mingw32_target}/%{version}/lto-wrapper
 %{_libexecdir}/gcc/%{mingw32_target}/%{version}/install-tools
@@ -589,6 +601,7 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{mingw32_libdir}/libssp.dll.a
 %{mingw32_libdir}/libssp_nonshared.a
 %{mingw32_libdir}/libstdc++fs.a
+%{mingw32_libdir}/libstdc++exp.a
 %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/crtbegin.o
 %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/crtend.o
 %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/crtfastmath.o
@@ -614,13 +627,9 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{_bindir}/%{mingw64_target}-gcov-dump
 %{_bindir}/%{mingw64_target}-gcov-tool
 %dir %{_prefix}/lib/gcc/%{mingw64_target}/%{version}
-%dir %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include-fixed
-%dir %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include
-%dir %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/install-tools
-%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include-fixed/README
-%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include-fixed/*.h
-%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include/*.h
-%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/install-tools/*
+%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include/
+%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/include-fixed/
+%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/install-tools/
 %{_libexecdir}/gcc/%{mingw64_target}/%{version}/collect2
 %{_libexecdir}/gcc/%{mingw64_target}/%{version}/lto-wrapper
 %{_libexecdir}/gcc/%{mingw64_target}/%{version}/install-tools
@@ -639,6 +648,7 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{mingw64_libdir}/libssp.dll.a
 %{mingw64_libdir}/libssp_nonshared.a
 %{mingw64_libdir}/libstdc++fs.a
+%{mingw64_libdir}/libstdc++exp.a
 %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/crtbegin.o
 %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/crtend.o
 %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/crtfastmath.o
@@ -664,13 +674,9 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{_bindir}/%{ucrt64_target}-gcov-dump
 %{_bindir}/%{ucrt64_target}-gcov-tool
 %dir %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}
-%dir %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include-fixed
-%dir %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include
-%dir %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/install-tools
-%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include-fixed/README
-%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include-fixed/*.h
-%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include/*.h
-%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/install-tools/*
+%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include/
+%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/include-fixed/
+%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/install-tools/
 %{_libexecdir}/gcc/%{ucrt64_target}/%{version}/collect2
 %{_libexecdir}/gcc/%{ucrt64_target}/%{version}/lto-wrapper
 %{_libexecdir}/gcc/%{ucrt64_target}/%{version}/install-tools
@@ -689,6 +695,7 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{ucrt64_libdir}/libssp.dll.a
 %{ucrt64_libdir}/libssp_nonshared.a
 %{ucrt64_libdir}/libstdc++fs.a
+%{ucrt64_libdir}/libstdc++exp.a
 %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/crtbegin.o
 %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/crtend.o
 %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/crtfastmath.o
@@ -721,6 +728,18 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{ucrt64_bindir}/libatomic-1.dll
 %{ucrt64_bindir}/libgcc_s_seh-1.dll
 %{ucrt64_bindir}/libssp-0.dll
+
+%files -n mingw32-libstdc++
+%license gcc/COPYING* COPYING.RUNTIME
+%{mingw32_bindir}/libstdc++-6.dll
+
+%files -n mingw64-libstdc++
+%license gcc/COPYING* COPYING.RUNTIME
+%{mingw64_bindir}/libstdc++-6.dll
+
+%files -n ucrt64-libstdc++
+%license gcc/COPYING* COPYING.RUNTIME
+%{ucrt64_bindir}/libstdc++-6.dll
 
 %files -n mingw32-libgomp
 %{mingw32_bindir}/libgomp-1.dll
@@ -777,7 +796,6 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 # Non-bootstrap files
 %if 0%{bootstrap} == 0
 %{mingw32_includedir}/c++/
-%{mingw32_bindir}/libstdc++-6.dll
 %{mingw32_libdir}/libstdc++.a
 %{mingw32_libdir}/libstdc++.dll.a
 %{mingw32_libdir}/libstdc++.dll.a-gdb.py
@@ -793,7 +811,6 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 # Non-bootstrap files
 %if 0%{bootstrap} == 0
 %{mingw64_includedir}/c++/
-%{mingw64_bindir}/libstdc++-6.dll
 %{mingw64_libdir}/libstdc++.a
 %{mingw64_libdir}/libstdc++.dll.a
 %{mingw64_libdir}/libstdc++.dll.a-gdb.py
@@ -809,7 +826,6 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 # Non-bootstrap files
 %if 0%{bootstrap} == 0
 %{ucrt64_includedir}/c++/
-%{ucrt64_bindir}/libstdc++-6.dll
 %{ucrt64_libdir}/libstdc++.a
 %{ucrt64_libdir}/libstdc++.dll.a
 %{ucrt64_libdir}/libstdc++.dll.a-gdb.py
@@ -902,6 +918,27 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 
 
 %changelog
+* Wed Apr 26 2023 Sandro Mani <manisandro@gmail.com> - 13.1.1-4
+- Update to gcc 20230426 snapshot
+
+* Tue Mar 28 2023 Sandro Mani <manisandro@gmail.com> - 13.0.1-3
+- Update to 20230324 snapshot
+
+* Fri Mar 24 2023 Sandro Mani <manisandro@gmail.com> - 13.0.1-2
+- Split out libstdc++ (#2181524)
+
+* Thu Mar 09 2023 Sandro Mani <manisandro@gmail.com> - 13.0.1-1
+- Update to 13.0.1
+
+* Thu Jan 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 12.2.1-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
+
+* Wed Jan 04 2023 Florian Weimer <fweimer@redhat.com> - 12.2.1-6
+- Apply upstream patches to improve C99 compatibility of configure scripts
+
+* Wed Jan 04 2023 Sandro Mani <manisandro@gmail.com> - 12.2.1-5
+- Update to 20221121 snapshot
+
 * Tue Nov 15 2022 Sandro Mani <manisandro@gmail.com> - 12.2.1-4
 - Fix incorrect requires
 
