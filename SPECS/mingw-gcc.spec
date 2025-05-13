@@ -14,17 +14,18 @@
 # Run the testsuite
 %global enable_tests 0
 
-%global DATE 20230728
-%global gitrev 8a3e2d71f2a0309540e68c79dadd66a06ca3da73
-%global gcc_version 13.2.1
-%global gcc_major 13
+%global DATE 20240801
+%global gitrev 43d4666d3d94934f11857a2fb9122c575be81801
+%global gcc_version 14.1.1
+%global gcc_major 14
 
 Name:           mingw-gcc
-Version:        %{gcc_version}
-Release:        7%{?dist}
+Version:        14.2.1
+Release:        3%{?dist}
 Summary:        MinGW Windows cross-compiler (GCC) for C
 
-License:        GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
+# Sync with native 'gcc' package
+License: GPL-3.0-or-later AND LGPL-3.0-or-later AND (GPL-3.0-or-later WITH GCC-exception-3.1) AND (GPL-3.0-or-later WITH Texinfo-exception) AND (LGPL-2.1-or-later WITH GCC-exception-2.0) AND (GPL-2.0-or-later WITH GCC-exception-2.0) AND (GPL-2.0-or-later WITH GNU-compiler-exception) AND BSL-1.0 AND GFDL-1.3-or-later AND Linux-man-pages-copyleft-2-para AND SunPro AND BSD-1-Clause AND BSD-2-Clause AND BSD-2-Clause-Views AND BSD-3-Clause AND BSD-4-Clause AND BSD-Source-Code AND Zlib AND MIT AND Apache-2.0 AND (Apache-2.0 WITH LLVM-Exception) AND ZPL-2.1 AND ISC AND LicenseRef-Fedora-Public-Domain AND HP-1986 AND curl AND Martin-Birgmeier AND HPND-Markus-Kuhn AND dtoa AND SMLNJ AND AMD-newlib AND OAR AND HPND-merchantability-variant AND HPND-Intel
 URL:            http://gcc.gnu.org
 
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -38,6 +39,8 @@ Source0:        %{srcdir}.tar.xz
 
 # See https://sourceforge.net/p/mingw-w64/mailman/mingw-w64-public/thread/8fd2fb03-9b8a-07e1-e162-0bb48bcc3984%40gmail.com/#msg37200751
 Patch0:         0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+# Add missing stdlib.h include
+Patch1:         mingw-gcc_include-stdlib.patch
 
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -96,6 +99,17 @@ Requires:       mingw32-winpthreads-static
 
 %description -n mingw32-gcc
 MinGW Windows cross-compiler (GCC) for C for the win32 target.
+
+
+%package -n mingw32-gcc-plugin-devel
+Summary:	Support for compiling plugins for MinGW GCC for the win32 target
+Requires:	mingw32-gcc = %{version}-%{release}
+Requires:	gmp-devel >= 4.1.2-8, mpfr-devel >= 3.1.0, libmpc-devel >= 0.8.1
+
+%description -n mingw32-gcc-plugin-devel
+This package contains header files and other support files
+for compiling GCC plugins.  The GCC plugin ABI is currently
+not stable, so plugins must be rebuilt any time GCC is updated.
 
 
 %if 0%{bootstrap} == 0
@@ -181,6 +195,17 @@ Requires:       mingw64-winpthreads-static
 
 %description -n mingw64-gcc
 MinGW Windows cross-compiler (GCC) for C for the win64 target.
+
+
+%package -n mingw64-gcc-plugin-devel
+Summary:	Support for compiling plugins for MinGW GCC for the win64 target
+Requires:	mingw64-gcc = %{version}-%{release}
+Requires:	gmp-devel >= 4.1.2-8, mpfr-devel >= 3.1.0, libmpc-devel >= 0.8.1
+
+%description -n mingw64-gcc-plugin-devel
+This package contains header files and other support files
+for compiling GCC plugins.  The GCC plugin ABI is currently
+not stable, so plugins must be rebuilt any time GCC is updated.
 
 
 %if 0%{bootstrap} == 0
@@ -269,6 +294,17 @@ Requires:       ucrt64-winpthreads-static
 MinGW Windows cross-compiler (GCC) for C for the win64 target.
 
 
+%package -n ucrt64-gcc-plugin-devel
+Summary:	Support for compiling plugins for MinGW GCC for the win64 target
+Requires:	ucrt64-gcc = %{version}-%{release}
+Requires:	gmp-devel >= 4.1.2-8, mpfr-devel >= 3.1.0, libmpc-devel >= 0.8.1
+
+%description -n ucrt64-gcc-plugin-devel
+This package contains header files and other support files
+for compiling GCC plugins.  The GCC plugin ABI is currently
+not stable, so plugins must be rebuilt any time GCC is updated.
+
+
 %if 0%{bootstrap} == 0
 %package -n ucrt64-libgcc
 Summary:        MinGW Windows GCC runtime libraries for C for the win64 target
@@ -353,7 +389,7 @@ configure_args="\
     --with-gnu-as --with-gnu-ld --verbose \
     --without-newlib \
     --disable-multilib \
-    --disable-plugin \
+    --disable-libcc1 \
     --with-system-zlib \
     --disable-nls --without-included-gettext \
     --disable-win32-registry \
@@ -710,6 +746,36 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{_mandir}/man1/%{ucrt64_target}-lto-dump.1*
 %endif
 
+%files -n mingw32-gcc-plugin-devel
+%dir %{_prefix}/lib/gcc/%{mingw32_target}
+%dir %{_prefix}/lib/gcc/%{mingw32_target}/%{version}
+%dir %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/plugin
+%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/plugin/gtype.state
+%{_prefix}/lib/gcc/%{mingw32_target}/%{version}/plugin/include
+%dir %{_libexecdir}/gcc/%{mingw32_target}
+%dir %{_libexecdir}/gcc/%{mingw32_target}/%{version}
+%{_libexecdir}/gcc/%{mingw32_target}/%{version}/plugin
+
+%files -n mingw64-gcc-plugin-devel
+%dir %{_prefix}/lib/gcc/%{mingw64_target}
+%dir %{_prefix}/lib/gcc/%{mingw64_target}/%{version}
+%dir %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/plugin
+%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/plugin/gtype.state
+%{_prefix}/lib/gcc/%{mingw64_target}/%{version}/plugin/include
+%dir %{_libexecdir}/gcc/%{mingw64_target}
+%dir %{_libexecdir}/gcc/%{mingw64_target}/%{version}
+%{_libexecdir}/gcc/%{mingw64_target}/%{version}/plugin
+
+%files -n ucrt64-gcc-plugin-devel
+%dir %{_prefix}/lib/gcc/%{ucrt64_target}
+%dir %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}
+%dir %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/plugin
+%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/plugin/gtype.state
+%{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/plugin/include
+%dir %{_libexecdir}/gcc/%{ucrt64_target}
+%dir %{_libexecdir}/gcc/%{ucrt64_target}/%{version}
+%{_libexecdir}/gcc/%{ucrt64_target}/%{version}/plugin
+
 %if 0%{bootstrap} == 0
 %files -n mingw32-libgcc
 %license gcc/COPYING* COPYING.RUNTIME
@@ -918,6 +984,33 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 
 
 %changelog
+* Sun Oct 06 2024 Neal Gompa <ngompa@fedoraproject.org> - 14.2.1-3
+- Rebuild on fixed mingw-crt
+
+* Mon Sep 30 2024 Sandro Mani <manisandro@gmail.com> - 14.2.1-2
+- Rebuild for fixed default msvcrt in mingw-crt
+
+* Tue Aug 27 2024 Sandro Mani <manisandro@gmail.com> - 14.2.1-1
+- Update to 14.2.1
+
+* Thu Jul 18 2024 Fedora Release Engineering <releng@fedoraproject.org> - 14.1.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
+
+* Tue Jul 16 2024 Sandro Mani <manisandro@gmail.com> - 14.1.1-4
+- Update to 20240701 snapshot
+
+* Mon Jun 10 2024 Sandro Mani <manisandro@gmail.com> - 14.1.1-3
+- Update to 20240607 snapshot
+
+* Fri Jun 07 2024 Zephyr Lykos <fedora@mochaa.ws> - 14.1.1-2
+- Build GCC with plugin support
+
+* Sat May 11 2024 Sandro Mani <manisandro@gmail.com> - 14.1.1-1
+- Update to 14.1.1
+
+* Wed Feb 07 2024 Sandro Mani <manisandro@gmail.com> - 14.0.1-1
+- Update to 14.0.1
+
 * Thu Jan 25 2024 Fedora Release Engineering <releng@fedoraproject.org> - 13.2.1-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
 
