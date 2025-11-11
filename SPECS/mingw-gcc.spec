@@ -14,14 +14,14 @@
 # Run the testsuite
 %global enable_tests 0
 
-%global DATE 20240801
-%global gitrev 43d4666d3d94934f11857a2fb9122c575be81801
-%global gcc_version 14.1.1
-%global gcc_major 14
+%global DATE 20250521
+%global gitrev b9def1721b12cae307c1a1ebc49030fce6531dfa
+%global gcc_version 15.1.1
+%global gcc_major 15
 
 Name:           mingw-gcc
-Version:        14.2.1
-Release:        3%{?dist}
+Version:        %{gcc_version}
+Release:        1%{?dist}
 Summary:        MinGW Windows cross-compiler (GCC) for C
 
 License:        GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions
@@ -637,6 +637,7 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{mingw32_libdir}/libssp_nonshared.a
 %{mingw32_libdir}/libstdc++fs.a
 %{mingw32_libdir}/libstdc++exp.a
+%{mingw32_libdir}/libstdc++.modules.json
 %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/crtbegin.o
 %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/crtend.o
 %{_prefix}/lib/gcc/%{mingw32_target}/%{version}/crtfastmath.o
@@ -684,6 +685,7 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{mingw64_libdir}/libssp_nonshared.a
 %{mingw64_libdir}/libstdc++fs.a
 %{mingw64_libdir}/libstdc++exp.a
+%{mingw64_libdir}/libstdc++.modules.json
 %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/crtbegin.o
 %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/crtend.o
 %{_prefix}/lib/gcc/%{mingw64_target}/%{version}/crtfastmath.o
@@ -731,6 +733,7 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 %{ucrt64_libdir}/libssp_nonshared.a
 %{ucrt64_libdir}/libstdc++fs.a
 %{ucrt64_libdir}/libstdc++exp.a
+%{ucrt64_libdir}/libstdc++.modules.json
 %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/crtbegin.o
 %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/crtend.o
 %{_prefix}/lib/gcc/%{ucrt64_target}/%{version}/crtfastmath.o
@@ -983,6 +986,10 @@ ln -sf %{ucrt64_bindir}/libssp-0.dll %{buildroot}%{ucrt64_libdir}/libssp.dll.a
 
 
 %changelog
+* Thu Jul 10 2025 Miroslav Rezanina <mrezanin@redhat.com> - 15.1.1-1
+- Synchronize with Fedora Rawhide
+  Resolves: RHEL-102715
+
 * Tue Jan 14 2025 Miroslav Rezanina <mrezanin@redhat.com> - 14.2.1-3
 - Synchronize with Fedora Rawhide
   Resolves: RHEL-73821
